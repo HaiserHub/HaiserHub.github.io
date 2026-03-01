@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Checkout – Peaberry by Bailey</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Poppins:wght@300;400;600;700&family=Montserrat:wght@300;400;500;700&family=Jua&display=swap" rel="stylesheet"/>
+<style>
+
+/* ===== Theme Variables ===== */
+:root {
+  --primary: #2B0C0E;
+  --primary-fg: #F8F1E7;
+  --bg: #F8F1E7;
+  --fg: #2B0C0E;
+  --card: #FDF8F8;
+  --card-fg: #2B0C0E;
+  --secondary: #E2D1C3;
+  --muted: #EAE4E0;
+  --muted-fg: #6D4348;
+  --border: #E8DDD4;
+  --destructive: #F14141;
+  --destructive-fg: #F8F1E7;
+  --radius: 0.625rem;
+}
+
+/* ===== Global Reset ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Keeps footer at bottom */
+}
+
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+
+/* ===== Announcement Bar ===== */
+.announce { position: fixed; top: 0; left: 0; width: 100%; background: var(--primary); color: var(--primary-fg); text-align: center; font-size: 11px; font-weight: 700; padding: 4px 0; letter-spacing: 1.5px; text-transform: uppercase; z-index: 1001; }
+.announce a { color: var(--primary-fg); text-decoration: underline; }
+
+/* ===== Header ===== */
+.header { position: fixed; top: 24px; left: 0; width: 100%; height: 70px; background: var(--card); box-shadow: 0 2px 8px rgba(0,0,0,.08); z-index: 999; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+.header nav { display: none; align-items: center; gap: 4px; font-size: 14px; font-weight: 600; }
+.header nav a { padding: 8px 16px; border-radius: 12px; color: var(--primary); transition: all .2s; }
+.header nav a:hover, .header nav a.active { background: var(--primary); color: var(--primary-fg); }
+.header .icons { display: flex; align-items: center; gap: 12px; flex: 1; justify-content: flex-end; }
+.header .icons a { color: var(--primary); }
+.cart-badge { position: absolute; top: -8px; right: -8px; background: var(--destructive); color: var(--destructive-fg); font-size: 10px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.burger { display: block; background: none; border: none; color: var(--primary); cursor: pointer; font-size: 24px; }
+.spacer { height: 94px; }
+
+/* ===== Dropdown & Drawer ===== */
+.menu-dd { position: relative; }
+.menu-dd .dd-panel { display: none; position: absolute; top: 100%; left: 0; margin-top: 4px; background: var(--card); border-radius: 12px; border: 1px solid var(--border); min-width: 160px; padding: 8px 0; z-index: 50; }
+.menu-dd:hover .dd-panel { display: block; }
+.menu-dd .dd-panel a { display: block; padding: 8px 20px; color: var(--primary); }
+.menu-dd .dd-panel a:hover { background: var(--muted); }
+.mobile-drawer { display: none; position: fixed; inset: 0; top: 94px; background: var(--card); z-index: 998; flex-direction: column; padding: 24px; gap: 8px; font-size: 18px; font-weight: 600; overflow-y: auto; }
+.mobile-drawer.open { display: flex; }
+.mobile-drawer a { padding: 12px 16px; border-radius: 12px; color: var(--primary); }
+.mobile-drawer a:hover { background: var(--muted); }
+
+/* ===== Checkout Page - Form Layout ===== */
+.checkout { max-width: 1152px; margin: 0 auto; padding: 48px 24px; flex: 1; }
+.checkout h1 { font-family: 'Jua', sans-serif; font-size: clamp(2.5rem, 6vw, 3rem); font-weight: 700; color: var(--primary); text-align: center; margin-bottom: 40px; }
+.checkout-layout { display: flex; flex-direction: column; gap: 32px; }
+.checkout-left { flex: 1; display: flex; flex-direction: column; gap: 32px; }
+.checkout-panel { border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: var(--card); }
+.panel-header { background: var(--primary); color: var(--primary-fg); padding: 16px 24px; font-family: 'Jua', sans-serif; font-size: 1.2rem; }
+.panel-body { padding: 24px; }
+
+/* ===== Checkout Page - Input & Buttons ===== */
+.delivery-btns { display: flex; gap: 16px; justify-content: center; margin-bottom: 24px; }
+.delivery-btns button { padding: 12px 32px; border: 2px solid var(--primary); background: transparent; color: var(--primary); font-family: 'Jua', sans-serif; font-size: 1.1rem; cursor: pointer; transition: all .2s; border-radius: 8px; }
+.delivery-btns button.active { background: var(--primary); color: var(--primary-fg); }
+.delivery-btns button:hover:not(.active) { background: rgba(43, 12, 14, 0.1); }
+
+.checkout-form { display: flex; flex-direction: column; gap: 16px; max-width: 500px; margin: 0 auto; }
+.checkout-form .row2 { display: flex; gap: 16px; }
+.checkout-form input { width: 100%; padding: 12px 16px; border: 2px solid var(--primary); background: transparent; font-family: 'Poppins', sans-serif; color: var(--primary); outline: none; font-size: 1rem; border-radius: 8px; }
+.checkout-form input::placeholder { color: rgba(43, 12, 14, 0.4); }
+
+.payment-btns { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.payment-btns button { width: 100%; max-width: 400px; padding: 16px 24px; border: 2px solid var(--primary); background: transparent; color: var(--primary); font-family: 'Jua', sans-serif; font-size: 1.1rem; cursor: pointer; transition: all .2s; border-radius: 8px; }
+.payment-btns button.active { background: var(--primary); color: var(--primary-fg); }
+.payment-btns button:hover:not(.active) { background: rgba(43, 12, 14, 0.1); }
+
+/* ===== Checkout Page - Order Summary Sidebar ===== */
+.order-summary { border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: var(--card); }
+.summary-items { padding: 16px; max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+.summary-item { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg); }
+.summary-item img { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; }
+.summary-item-info { flex: 1; min-width: 0; }
+.summary-item-info .name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 14px; color: var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.summary-item-info .price { font-size: 12px; color: var(--muted-fg); }
+.qty-controls { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.qty-btn { width: 24px; height: 24px; border-radius: 50%; border: none; background: var(--muted); color: var(--primary); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all .2s; }
+.qty-btn:hover { background: var(--primary); color: var(--primary-fg); }
+.qty-num { font-size: 14px; font-weight: 700; color: var(--primary); width: 24px; text-align: center; }
+.remove-btn { background: none; border: none; color: var(--destructive); cursor: pointer; font-size: 16px; padding: 4px; }
+.remove-btn:hover { opacity: .7; }
+.summary-footer { padding: 16px; border-top: 1px solid var(--border); }
+.summary-total { display: flex; justify-content: space-between; font-family: 'Jua', sans-serif; font-size: 1.1rem; color: var(--primary); margin-bottom: 16px; }
+.place-order-btn { width: 100%; background: var(--primary); color: var(--primary-fg); border: none; padding: 12px; border-radius: 12px; font-family: 'Jua', sans-serif; font-size: 1.1rem; cursor: pointer; transition: opacity .2s; }
+.place-order-btn:hover { opacity: .9; }
+.empty-cart { text-align: center; padding: 32px; color: var(--muted-fg); }
+.empty-cart a { color: var(--primary); text-decoration: underline; }
+
+/* ===== Thank You & Notifications ===== */
+.thank-you { max-width: 640px; margin: 0 auto; padding: 96px 24px; text-align: center; display: none; flex: 1; }
+.thank-you h1 { font-family: 'Jua', sans-serif; font-size: 3rem; font-weight: 700; color: var(--primary); margin-bottom: 24px; }
+.thank-you p { color: var(--muted-fg); margin-bottom: 32px; }
+.thank-you a { display: inline-block; background: var(--primary); color: var(--primary-fg); padding: 12px 32px; border-radius: 12px; font-weight: 600; transition: opacity .2s; }
+.thank-you a:hover { opacity: .9; }
+
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--primary); color: var(--primary-fg); padding: 12px 24px; border-radius: 12px; font-size: 14px; font-weight: 600; z-index: 9999; opacity: 0; transform: translateY(20px); transition: all .3s; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ===== Footer ===== */
+.footer { background: var(--primary); color: var(--primary-fg); padding: 40px 24px; margin-top: auto; }
+.footer-inner { max-width: 1152px; margin: 0 auto; }
+.footer-top { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+.footer-logo { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; font-style: italic; }
+.footer-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; font-size: 14px; font-family: monospace; }
+.footer-line { height: 1px; background: rgba(255,255,255,.3); margin: 24px 0; }
+.footer-bottom { display: flex; flex-direction: column; align-items: center; gap: 16px; font-size: 12px; font-family: monospace; }
+.footer-socials { display: flex; gap: 16px; }
+.footer-socials svg { width: 20px; height: 20px; fill: currentColor; }
+
+/* ===== Media Queries ===== */
+@media(min-width:768px) {
+  .header { height: 80px; padding: 0 48px; }
+  .header nav { display: flex; }
+  .burger { display: none; }
+  .spacer { height: 104px; }
+  .footer-top, .footer-bottom { flex-direction: row; justify-content: space-between; }
+}
+
+@media(min-width:1024px) {
+  .checkout-layout { flex-direction: row; }
+  .order-summary { width: 380px; position: sticky; top: 112px; align-self: flex-start; }
+}
+
+</style>
+</head>
+<body>
+<div class="announce"><a href="menu.html">Order Now!</a></div>
+<header class="header" style="background-color: var(--card); box-shadow: 0 2px 8px rgba(0,0,0,.08);">
+  <div style="flex: 1; display: flex; justify-content: flex-start;"><a href="home.html"><img src="images/logo-nobgB.png" alt="Peaberry Logo" style="height: 200px; display: block;"></a></div>
+  <nav><a href="home.html">Home</a><div class="menu-dd"><a href="menu.html">Menu ▾</a><div class="dd-panel"><a href="coffee.html">Coffee</a><a href="non-coffee.html">Non-Coffee</a><a href="food.html">Food</a></div></div><a href="store-locator.html">Store Locator</a><a href="about.html">About Us</a><a href="gallery.html">Gallery</a></nav>
+  <div class="icons"><a href="contact.html" title="Contact"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a><a href="checkout.html" title="Cart" style="position:relative"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="cart-badge" id="cartBadge" style="display:none">0</span></a><button class="burger" id="burgerBtn" aria-label="Toggle menu">☰</button></div>
+</header>
+<div class="mobile-drawer" id="mobileDrawer"><a href="home.html">Home</a><a href="menu.html">Menu</a><a href="coffee.html">Coffee</a><a href="non-coffee.html">Non-Coffee</a><a href="food.html">Food</a><a href="store-locator.html">Store Locator</a><a href="about.html">About Us</a><a href="gallery.html">Gallery</a><a href="contact.html">Contact</a><a href="checkout.html" class="active">Checkout</a></div>
+<div class="spacer"></div>
+
+<!-- Thank You Section - shown after order, flex:1 pushes footer down -->
+<div class="thank-you" id="thankYou">
+  <h1>Thank You!</h1>
+  <p>Your order has been placed successfully. Bailey is giving a happy woof!</p>
+  <a href="menu.html">Back to Menu</a>
+</div>
+
+<!-- Checkout Form -->
+<div class="checkout" id="checkoutView">
+  <h1>Checkout</h1>
+  <div class="checkout-layout">
+    <div class="checkout-left">
+      <div class="checkout-panel">
+        <div class="panel-header">1. Delivery Options</div>
+        <div class="panel-body">
+          <div class="delivery-btns">
+            <button type="button" class="active" data-method="pickup">Pick Up</button>
+            <button type="button" data-method="deliver">Deliver</button>
+          </div>
+          <form id="checkoutForm" class="checkout-form">
+            <div class="row2"><input type="text" placeholder="First Name" required/><input type="text" placeholder="Last Name" required/></div>
+            <input type="email" placeholder="Email Address" required/>
+            <input type="text" placeholder="Address" required/>
+            <input type="tel" placeholder="Contact Number" required/>
+          </form>
+        </div>
+      </div>
+      <div class="checkout-panel">
+        <div class="panel-header">2. Payment Options</div>
+        <div class="panel-body">
+          <div class="payment-btns" id="paymentBtns">
+            <button type="button" class="active" data-pay="cash">Cash on Delivery</button>
+            <button type="button" data-pay="gcash">GCash</button>
+            <button type="button" data-pay="bank">Bank Transfer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="order-summary">
+      <div class="panel-header" style="text-align:center">Order Summary</div>
+      <div class="summary-items" id="summaryItems"></div>
+      <div class="summary-footer" id="summaryFooter" style="display:none">
+        <div class="summary-total"><span>Total</span><span id="totalPrice">₱0</span></div>
+        <button type="submit" form="checkoutForm" class="place-order-btn">Place Order</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top"><span class="footer-logo"><img src="images/footerLogo.png" alt="" height="40px"></span><nav class="footer-nav"><a href="home.html">Home</a><a href="menu.html">Menu</a><a href="store-locator.html">Store Locator</a><a href="about.html">About Us</a><a href="contact.html">Contact</a><a href="gallery.html">Gallery</a></nav></div>
+    <div class="footer-line"></div>
+    <div class="footer-bottom">
+      <div class="footer-socials"><a href="https://www.facebook.com/p/Peaberry-by-Bailey-100091376727040/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 24C5.373 24 0 18.627 0 12S5.373 0 12 0s12 5.373 12 12-5.373 12-12 12z" fill="#1877f2"/><path d="M15.12 7.749L14.07 7.745c-1.168 0-1.393.555-1.393 1.368v1.79h2.396l-.312 2.411h-2.084v6.18h-2.496v-6.18H8.567v-2.411h1.614v-1.78C10.181 6.586 11.157 5.5 13.58 5.5c1.026 0 1.909.076 2.166.11v2.139z" fill="#fff"/></svg></a><a href="https://www.instagram.com/peaberry_bybailey/?hl=en" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#fee411"/><stop offset="10%" stop-color="#fedb16"/><stop offset="25%" stop-color="#fec125"/><stop offset="40%" stop-color="#fe983d"/><stop offset="55%" stop-color="#fe5f5e"/><stop offset="70%" stop-color="#ee2a7b"/><stop offset="85%" stop-color="#d02c8d"/><stop offset="100%" stop-color="#962fbf"/></linearGradient></defs><path fill="url(#ig-grad)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm3.98-10.98a1.44 1.44 0 110 2.881 1.44 1.44 0 010-2.881z"/></svg></a></div>
+      <p>NAVALLO, ODRONIA, PALISOC, QUIAMBAO, RAMIREZ</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ===== Cart & Badge Helpers ===== */
+var STORAGE_KEY = 'peaberry_cart';
+function getCart() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { return []; } }
+function saveCart(c) { localStorage.setItem(STORAGE_KEY, JSON.stringify(c)); }
+function showToast(msg) { var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 2000); }
+function updateBadge() { var c = getCart(); var n = c.reduce(function(s, i) { return s + i.quantity; }, 0); var b = document.getElementById('cartBadge'); if (n > 0) { b.style.display = 'flex'; b.textContent = n; } else { b.style.display = 'none'; } }
+
+/* ===== Render Order Summary - builds the cart item list ===== */
+function renderSummary() {
+  var items = getCart();
+  var container = document.getElementById('summaryItems');
+  var footer = document.getElementById('summaryFooter');
+  container.innerHTML = '';
+  if (items.length === 0) {
+    container.innerHTML = '<div class="empty-cart">Your cart is empty. <a href="menu.html">Browse menu</a></div>';
+    footer.style.display = 'none';
+    return;
+  }
+  footer.style.display = 'block';
+  var total = 0;
+  items.forEach(function(item) {
+    total += item.price * item.quantity;
+    var div = document.createElement('div');
+    div.className = 'summary-item';
+    div.innerHTML = '<img src="' + item.image + '" alt="' + item.name + '"/><div class="summary-item-info"><div class="name">' + item.name + '</div><div class="price">₱' + item.price + '</div><div class="qty-controls"><button class="qty-btn" data-id="' + item.id + '" data-action="minus">−</button><span class="qty-num">' + item.quantity + '</span><button class="qty-btn" data-id="' + item.id + '" data-action="plus">+</button></div></div><button class="remove-btn" data-id="' + item.id + '" title="Remove">🗑</button>';
+    container.appendChild(div);
+  });
+  document.getElementById('totalPrice').textContent = '₱' + total.toLocaleString();
+
+  /* Quantity +/- buttons */
+  container.querySelectorAll('.qty-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var cart = getCart();
+      var id = btn.dataset.id;
+      var action = btn.dataset.action;
+      var idx = cart.findIndex(function(i) { return i.id === id; });
+      if (idx === -1) return;
+      if (action === 'plus') cart[idx].quantity++;
+      else { cart[idx].quantity--; if (cart[idx].quantity <= 0) cart.splice(idx, 1); }
+      saveCart(cart); updateBadge(); renderSummary();
+    });
+  });
+
+  /* Remove buttons */
+  container.querySelectorAll('.remove-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var cart = getCart().filter(function(i) { return i.id !== btn.dataset.id; });
+      saveCart(cart); updateBadge(); renderSummary();
+    });
+  });
+}
+
+/* ===== Delivery Option Toggle ===== */
+document.querySelectorAll('.delivery-btns button').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.delivery-btns button').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+  });
+});
+
+/* ===== Payment Option Toggle ===== */
+document.querySelectorAll('.payment-btns button').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.payment-btns button').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+  });
+});
+
+/* ===== Form Submit - show thank you page ===== */
+document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var cart = getCart();
+  if (cart.length === 0) { showToast('Cart is empty – add items from the menu first.'); return; }
+  localStorage.removeItem(STORAGE_KEY);
+  document.getElementById('checkoutView').style.display = 'none';
+  document.getElementById('thankYou').style.display = 'block';
+  updateBadge();
+  showToast('Order placed! 🎉 Thank you for ordering from Peaberry!');
+});
+
+/* ===== Burger Menu ===== */
+var burgerBtn = document.getElementById('burgerBtn');
+var drawer = document.getElementById('mobileDrawer');
+burgerBtn.addEventListener('click', function() {
+  var open = drawer.classList.toggle('open');
+  burgerBtn.textContent = open ? '✕' : '☰';
+});
+
+updateBadge();
+renderSummary();
+</script>
+</body>
+</html>
